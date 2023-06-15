@@ -1,0 +1,15 @@
+中文|[English](./README.md)
+- # logseq-link-to-local
+	- 将网络资源转换成本地资源
+- ## 功能
+	- Image
+	- Audio
+	- Video
+	- 待补充...
+- ## 用法
+	- 输入斜杠命令: `/ link-to-local`
+- ## 演示
+	- ![gif](./logseq-link-to-local.gif)
+	- http://img.ypll.xyz/logseq/logseq-link-to-local.mp4
+- ## 许可证
+	- [MIT](https://choosealicense.com/licenses/mit/)
