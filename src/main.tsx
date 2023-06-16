@@ -35,14 +35,14 @@ function main() {
     const originalNames = originalImages.map(i => (/([^/]+)\.(png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(i)?.[0])
     const localPaths: string[] = []
 
-    const saveImages = (item, index) => {
+    const saveImages = (item: string, index: number) => {
       return new Promise((resolve, reject) => {
         fetch(item)
           .then(res => res.arrayBuffer())
           .then(res => {
-            storage.setItem(decodeURIComponent(originalNames[index] || '🤡'), res).then(one => {
+            storage.setItem(decodeURIComponent(originalNames[index] || '🤡'), res as unknown as string).then(one => {
               logseq.UI.showMsg(`Write DONE 🎉 - ${one}`, 'success')
-              resolve(one.match(/\/assets\/(.*)/ig))
+              resolve((one as unknown as string).match(/\/assets\/(.*)/ig))
             })
           })
           .catch(error => {
@@ -53,16 +53,16 @@ function main() {
     }
 
     Promise.all(
-      originalUrls.map((item, index) => saveImages(item, index))
+      originalUrls.map((item, index) => saveImages(item as string, index))
     ).then(paths => {
-      paths.forEach(path => localPaths.push(`..${path[0]}`))
+      paths.forEach(path => localPaths.push(`..${(path as string)[0]}`))
 
       let currentContent = currentBlock?.content
       originalUrls.forEach((item, index) => {
-        currentContent = currentContent?.replace(item, localPaths[index])
+        currentContent = currentContent?.replace(item as string, localPaths[index])
       })
 
-      logseq.Editor.updateBlock(currentBlock?.uuid, currentContent)
+      logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '🤡')
     }).catch(error => {
       logseq.UI.showMsg(JSON.stringify(Object.keys(error).length !== 0 ? (error.message || error) : '请求失败'), 'error')
     })
