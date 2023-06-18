@@ -23,13 +23,13 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
     }[] = []
 
     // 使用正则匹配出 markdown 格式图片和网络链接图片
-    const markdownImages = currentBlock?.content.match(/!\[.*?\]\(https?(.*?)\.(?:png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)?(.*?)\)/ig)
-    const linkImages = currentBlock?.content.match(/https?:\/\/(.+\/)+.+(\.(?:png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))(?:\?[^?\s#]*)?(?:#[^\s]*)?/ig)
+    const markdownImages = currentBlock?.content.match(/!\[.*?\]\(https?(.*?)\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)?(.*?)\)/ig)
+    const linkImages = currentBlock?.content.match(/https?:\/\/(.+\/)+.+(\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))(?:\?[^?\s#]*)?(?:#[^\s]*)?/ig)
 
     if (markdownImages && markdownImages.length > 0) {
       markdownImages.forEach(i => {
         const url = (/\((.*?)\)/ig).exec(i)?.[1]
-        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
+        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
         options.push({
           image: i,
           url,
@@ -43,7 +43,7 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
 
     if (linkImages && linkImages.length > 0) {
       linkImages.forEach(url => {
-        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
+        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
         options.push({
           image: null,
           url,
