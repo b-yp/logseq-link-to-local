@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.2.0...v1.3.0) (2023-06-19)
+
+
+### Features
+
+* update readme ([321183c](https://github.com/b-yp/logseq-link-to-local/commit/321183c1acf2d1ed6e8a22d3dd6f4763b0b18670))
+
 # [1.2.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.1.0...v1.2.0) (2023-06-19)
 
 
