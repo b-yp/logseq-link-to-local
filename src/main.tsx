@@ -1,4 +1,5 @@
 import "@logseq/libs";
+import { BlockEntity } from "@logseq/libs/dist/LSPlugin";
 
 import React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -10,21 +11,8 @@ import "./index.css";
 
 const pluginId = PL.id;
 
-function main() {
-  console.info(`#${pluginId}: MAIN`);
-
-  const root = ReactDOM.createRoot(document.getElementById("app")!);
-
-  root.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-
-  logseq.Editor.registerSlashCommand('Save link assets to local', async () => {
+const saveBlockAssets = (currentBlock: BlockEntity) => {
     const storage = logseq.Assets.makeSandboxStorage()
-    const currentBlock = await logseq.Editor.getCurrentBlock()
-
     const options: {
       image: string | null
       url: string | undefined
@@ -35,13 +23,13 @@ function main() {
     }[] = []
 
     // 使用正则匹配出 markdown 格式图片和网络链接图片
-    const markdownImages = currentBlock?.content.match(/!\[.*?\]\(https?(.*?)\.(?:png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)?(.*?)\)/ig)
-    const linkImages = currentBlock?.content.match(/https?:\/\/(.+\/)+.+(\.(?:png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))(?:\?[^?\s#]*)?(?:#[^\s]*)?/ig)
+    const markdownImages = currentBlock?.content.match(/!\[.*?\]\(https?(.*?)\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)?(.*?)\)/ig)
+    const linkImages = currentBlock?.content.match(/https?:\/\/(.+\/)+.+(\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))(?:\?[^?\s#]*)?(?:#[^\s]*)?/ig)
 
     if (markdownImages && markdownImages.length > 0) {
       markdownImages.forEach(i => {
         const url = (/\((.*?)\)/ig).exec(i)?.[1]
-        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
+        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
         options.push({
           image: i,
           url,
@@ -55,7 +43,7 @@ function main() {
 
     if (linkImages && linkImages.length > 0) {
       linkImages.forEach(url => {
-        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
+        const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
         options.push({
           image: null,
           url,
@@ -108,6 +96,38 @@ function main() {
     }).catch(error => {
       logseq.UI.showMsg(JSON.stringify(Object.keys(error).length !== 0 ? (error.message || error) : '请求失败'), 'error')
     })
+};
+
+
+function main() {
+  console.info(`#${pluginId}: MAIN`);
+
+  const root = ReactDOM.createRoot(document.getElementById("app")!);
+
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+  
+  logseq.App.registerPageMenuItem('Save all link assets to local', async (e) => {
+    const pageBlocksTree = await logseq.Editor.getPageBlocksTree(e.page)
+    pageBlocksTree.forEach(block => {
+      if (!block) return
+      saveBlockAssets(block)
+    })
+  })
+
+  logseq.Editor.registerBlockContextMenuItem('Save link assets to local', async () => {
+    const currentBlock = await logseq.Editor.geCurrentBlock()
+    if (currentBlock === null) return
+    saveBlockAssets(currentBlock)
+  })
+
+  logseq.Editor.registerSlashCommand('Save link assets to local', async () => {
+    const currentBlock = await logseq.Editor.getCurrentBlock()
+    if (currentBlock === null) return
+    saveBlockAssets(currentBlock)
   })
 }
 
