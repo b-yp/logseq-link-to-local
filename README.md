@@ -1,4 +1,4 @@
-English|[中文](./README_CN.md)
+English | [中文](./README_CN.md)
 
 - # logseq-link-to-local
 	- Convert network assets into local assets.
@@ -8,7 +8,12 @@ English|[中文](./README_CN.md)
 	- Video
 	- To be supplemented ...
 - ## Usage
-	- Enter slash command: `/ link-to-local`
+	- Enter slash command: `/Save link assets to local`
+		- ![command](./assets/command.jpg)
+	- Block menu item: `Save link assets to local`
+		- ![block_menu_item](./assets/block_menu_item.jpg)
+	- Page menu item: `Save all link assets to local`
+		- ![page_menu_item](./assets/page_menu_item.jpg)
 - ## Demo
 	- ![gif](./logseq-link-to-local.gif)
 	- http://img.ypll.xyz/logseq/logseq-link-to-local.mp4
