@@ -44,7 +44,7 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
         image: i,
         url,
         fullName: res[0],
-        name: res[1] || `🤡_${Date}`,
+        name: res[1] || `🤡_${Date.now()}`,
         type: getType(),
         description: (/!\[(.*?)\]/ig).exec(i)?.[1] || res[1] || '🤡'
       })
@@ -59,7 +59,7 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
         image: null,
         url,
         fullName: res[0],
-        name: res[1] || `🤡_${Date}`,
+        name: res[1] || `🤡_${Date.now()}`,
         type: res[2] || 'png',
         description: res[1] || '🤡'
       })
