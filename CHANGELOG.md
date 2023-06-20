@@ -1,3 +1,15 @@
+# [1.4.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.3.0...v1.4.0) (2023-06-20)
+
+
+### Bug Fixes
+
+* Fix the issue of images being replaced due to having the same name. & Matching juejin Images ([15e8939](https://github.com/b-yp/logseq-link-to-local/commit/15e893917ca7c35df635bf7d7e79af5215172df7))
+
+
+### Features
+
+* update logo ([a5ae36f](https://github.com/b-yp/logseq-link-to-local/commit/a5ae36fe553713bd9fcbcd009192fbb3152f7283))
+
 # [1.3.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.2.0...v1.3.0) (2023-06-19)
 
 
