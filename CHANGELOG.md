@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/b-yp/logseq-link-to-local/compare/v1.4.0...v1.4.1) (2023-06-20)
+
+
+### Bug Fixes
+
+* Date function usage error ([bb6d1c7](https://github.com/b-yp/logseq-link-to-local/commit/bb6d1c779bf735ca092b1855f79fc1f7b762d8fe))
+
 # [1.4.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.3.0...v1.4.0) (2023-06-20)
 
 
