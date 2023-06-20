@@ -5,6 +5,7 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 
 import App from "./App";
+import { findImageLinks } from "./utils";
 import { logseq as PL } from "../package.json";
 
 import "./index.css";
@@ -13,67 +14,17 @@ const pluginId = PL.id;
 
 const saveBlockAssets = (currentBlock: BlockEntity) => {
   const storage = logseq.Assets.makeSandboxStorage()
-  const options: {
-    image: string | null
-    url: string | undefined
-    fullName: string | undefined
-    name: string
-    type: string
-    description: string
-  }[] = []
-
-  // 使用正则匹配出 markdown 格式图片和网络链接图片
-  const markdownImages = currentBlock?.content.match(/!\[.*?\]\(https?(.*?)\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)?(.*?)\)/ig)
-  const linkImages = currentBlock?.content.match(/https?:\/\/(.+\/)+.+(\.(?:png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))(?:\?[^?\s#]*)?(?:#[^\s]*)?/ig)
-
-  if (markdownImages && markdownImages.length > 0) {
-    markdownImages.forEach(i => {
-      const url = (/\((.*?)\)/ig).exec(i)?.[1]
-      // 这里加 awebp 主要是匹配掘金图片
-      const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|awebp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
-      const getType = () => {
-        if (!res[2]) {
-          return 'png'
-        }
-        if (res[2] === 'awebp') {
-          return 'webp'
-        }
-        return res[2]
-      }
-      options.push({
-        image: i,
-        url,
-        fullName: res[0],
-        name: res[1] || `🤡_${Date.now()}`,
-        type: getType(),
-        description: (/!\[(.*?)\]/ig).exec(i)?.[1] || res[1] || '🤡'
-      })
-    })
-  }
-
-  if (linkImages && linkImages.length > 0) {
-    linkImages.forEach(url => {
-      const res = url ? (/([^/]+)\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/ig).exec(url) || [] : []
-      console.log('res', res)
-      options.push({
-        image: null,
-        url,
-        fullName: res[0],
-        name: res[1] || `🤡_${Date.now()}`,
-        type: res[2] || 'png',
-        description: res[1] || '🤡'
-      })
-    })
-  }
-
+  const options = findImageLinks(currentBlock.content)
   const localPaths: string[] = []
+
+  console.log('options', options)
 
   const saveImages = (item: string, index: number) => {
     return new Promise((resolve, reject) => {
       fetch(item)
         .then((res: any) => {
           if (res.status !== 200) {
-            logseq.UI.showMsg('请求失败，请检查链接或者去掉链接参数（问号及后面的部分）试试', 'error')
+            logseq.UI.showMsg(`链接: ${item} 请求失败，请检查链接或者去掉链接参数（问号及后面的部分）试试`, 'error')
             return reject(res)
           }
           return res.arrayBuffer()
@@ -85,14 +36,21 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
           })
         })
         .catch(error => {
-          logseq.UI.showMsg(JSON.stringify(Object.keys(error).length !== 0 ? (error.message || error) : '请求失败'), 'error')
+          logseq.UI.showMsg(Object.keys(error).length !== 0 ? JSON.stringify((error.message || error)) : '请求失败', 'error')
           reject(error)
         })
     })
   }
 
   Promise.all(
-    options.map((item, index) => saveImages((item.url) as string, index))
+    options.map((item, index) => {
+      /**
+       * wps 便签图片带参请求会报错，所以针对 wps 便签图片单独处理，使用无参 url
+       * wps 便签图片使用 s3 对象存储， 前缀为 "moffice-note"
+       */
+      const url = item.url?.includes('moffice-note') ? item.url : item.originalUrl
+      return saveImages((url) as string, index)
+    })
   ).then(paths => {
     paths.forEach(path => localPaths.push(`..${(path as string)[0]}`))
 
@@ -104,9 +62,9 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
        * 2: 网络链接图片
        * 通过 image 是否为 null 判断
        */
-      currentContent = item.image ?
-        currentContent?.replace((item.url) as string, localPaths[index]) :
-        currentContent?.replace((item.url) as string, `![${options[index].name}](${localPaths[index]})`)
+      currentContent = item.mdImage ?
+        currentContent?.replace((item.originalUrl) as string, localPaths[index]) :
+        currentContent?.replace((item.originalUrl) as string, `![${options[index].name}](${localPaths[index]})`)
     })
 
     logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '🤡')
