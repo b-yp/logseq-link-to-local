@@ -1,3 +1,16 @@
+# [1.5.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.4.1...v1.5.0) (2023-06-20)
+
+
+### Bug Fixes
+
+* Date function usage error ([687525a](https://github.com/b-yp/logseq-link-to-local/commit/687525ad85cf7178b5b19774fd1fba97e831d10c))
+* Fix the issue of images being replaced due to having the same name. & Matching juejin Images ([43e8144](https://github.com/b-yp/logseq-link-to-local/commit/43e8144a146c8ec8b02f5dad4e8c82845665b59e))
+
+
+### Features
+
+* Reconstruct matching function ([f559ed2](https://github.com/b-yp/logseq-link-to-local/commit/f559ed22eb71bd8c1b0913b8cff34e6198d83490))
+
 ## [1.4.1](https://github.com/b-yp/logseq-link-to-local/compare/v1.4.0...v1.4.1) (2023-06-20)
 
 
