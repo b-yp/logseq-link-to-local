@@ -11,3 +11,14 @@ export interface RichText {
     link?: string | null
   }
 }
+
+export interface ImageLink {
+  mdImage: string | null
+  originalUrl: string | undefined
+  url: string | undefined
+  params: string | undefined
+  fullName: string | undefined
+  name: string
+  type: string
+  description: string
+}
