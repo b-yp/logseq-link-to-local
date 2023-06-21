@@ -1,3 +1,15 @@
+# [1.6.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.5.0...v1.6.0) (2023-06-21)
+
+
+### Bug Fixes
+
+* Fix block menu item click invalidity ([30ae904](https://github.com/b-yp/logseq-link-to-local/commit/30ae904dbf04819126f3fe07a61155953372b573))
+
+
+### Features
+
+* Added block deep-first traversal and saving ([07ac92d](https://github.com/b-yp/logseq-link-to-local/commit/07ac92d42507aa484dc638ac961a78cee34c3d52))
+
 # [1.5.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.4.1...v1.5.0) (2023-06-20)
 
 
