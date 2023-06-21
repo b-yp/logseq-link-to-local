@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.0...v1.6.1) (2023-06-21)
+
+
+### Bug Fixes
+
+* Add an index and timestamp to all image names to ensure uniqueness ([75b3d2f](https://github.com/b-yp/logseq-link-to-local/commit/75b3d2f51d86b680c231313aa6122961042ad792))
+
 # [1.6.0](https://github.com/b-yp/logseq-link-to-local/compare/v1.5.0...v1.6.0) (2023-06-21)
 
 
