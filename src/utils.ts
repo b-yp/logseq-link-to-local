@@ -37,7 +37,7 @@ export const findImageLinks = (text: string | undefined): ImageLink[] => {
 
   while ((match = markdownRegex.exec(text)) !== null) {
     const fullName = match[2].split('/').pop()?.split('?')[0]
-    const name = fullName?.split('.')[0] || `🤡_${index}_${Date.now()}`;
+    const name = `${fullName?.split('.')[0] || '🤡'}_${index}_${Date.now()}`;
     // const type = fullName?.split('.')[1] || 'png';
     const url = match[2].split('?')[0];
     const originalUrl = match[2];
@@ -78,7 +78,7 @@ export const findImageLinks = (text: string | undefined): ImageLink[] => {
     }
 
     const fullName = match[0].split('/').pop()?.split('?')[0];
-    const name = fullName?.split('.')[0] || `🤡_${index}_${Date.now()}`;
+    const name = `${fullName?.split('.')[0] || '🤡'}_${index}_${Date.now()}`;
     const type = fullName?.split('.')[1] || 'png';
     const url = match[1].split('?')[0];
     const originalUrl = match[0];
