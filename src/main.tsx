@@ -93,8 +93,9 @@ function main() {
     })
   })
 
-  logseq.Editor.registerBlockContextMenuItem('Save link assets to local', async () => {
-    const currentBlock = await logseq.Editor.geCurrentBlock()
+  logseq.Editor.registerBlockContextMenuItem('Save link assets to local', async ({ uuid }) => {
+    if (!uuid) return
+    const currentBlock = await logseq.Editor.getBlock(uuid)
     if (currentBlock === null) return
     saveBlockAssets(currentBlock)
   })
