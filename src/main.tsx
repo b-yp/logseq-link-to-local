@@ -5,7 +5,7 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 
 import App from "./App";
-import { findImageLinks } from "./utils";
+import { deepFirstTraversal, findImageLinks } from "./utils";
 import { logseq as PL } from "../package.json";
 
 import "./index.css";
@@ -16,8 +16,6 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
   const storage = logseq.Assets.makeSandboxStorage()
   const options = findImageLinks(currentBlock.content)
   const localPaths: string[] = []
-
-  console.log('options', options)
 
   const saveImages = (item: string, index: number) => {
     return new Promise((resolve, reject) => {
@@ -87,14 +85,14 @@ function main() {
 
   logseq.App.registerPageMenuItem('Save all link assets to local', async (e) => {
     const pageBlocksTree = await logseq.Editor.getPageBlocksTree(e.page)
-    pageBlocksTree.forEach(block => {
-      if (!block) return
-      saveBlockAssets(block)
-    })
+
+    // 深度优先遍历执行保存方法
+    deepFirstTraversal(pageBlocksTree, saveBlockAssets)
   })
 
-  logseq.Editor.registerBlockContextMenuItem('Save link assets to local', async () => {
-    const currentBlock = await logseq.Editor.geCurrentBlock()
+  logseq.Editor.registerBlockContextMenuItem('Save link assets to local', async ({ uuid }) => {
+    if (!uuid) return
+    const currentBlock = await logseq.Editor.getBlock(uuid)
     if (currentBlock === null) return
     saveBlockAssets(currentBlock)
   })

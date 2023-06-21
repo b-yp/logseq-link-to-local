@@ -1,4 +1,4 @@
-import { LSPluginUserEvents } from "@logseq/libs/dist/LSPlugin.user";
+import { BlockEntity, LSPluginUserEvents } from "@logseq/libs/dist/LSPlugin.user";
 import React from "react";
 
 import { ImageLink } from "./types";
@@ -25,12 +25,11 @@ export const useAppVisible = () => {
   return React.useSyncExternalStore(subscribeToUIVisible, () => _visible);
 };
 
-
 // 用于匹配 markdown 格式图片和你 直接链接图片， GPT4 给的匹配函数
 export const findImageLinks = (text: string | undefined): ImageLink[] => {
   if (!text) return [];
   const markdownRegex = /!\[([^\]]*)\]\((https?:\/\/[^)]*)\)/gi;
-  const urlRegex = /(https?:\/\/[^\s]*\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))([^\s]*)/gi;
+  const urlRegex = /(https?:\/\/[^\s]*\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))([^\s(){}]*)/gi;
   const matches = [];
   let match;
   let index = 1
@@ -100,3 +99,36 @@ export const findImageLinks = (text: string | undefined): ImageLink[] => {
 
   return matches;
 }
+
+/**
+ * 深度优先遍历，递归实现
+ * @param arr BlockEntity[]
+ * @param fn (block: BlockEntity) => void
+ */
+export const deepFirstTraversal = (arr: BlockEntity[], fn: (block: BlockEntity) => void) => {
+  arr.forEach(obj => {
+    console.log(obj.id); // 输出当前节点的 id
+    if (obj) {
+      fn(obj)
+    }
+    if (obj.children && obj.children.length > 0) {
+      deepFirstTraversal(obj.children as BlockEntity[], fn); // 递归遍历子节点
+    }
+  });
+}
+
+/**
+ *  深度优先遍历 block, 迭代实现
+ */
+// const deepFirstTraversal = (obj) => {
+//   const stack = [obj];
+
+//   while (stack.length > 0) {
+//     const current = stack.pop();
+//     console.log(current.id); // 输出当前节点的 id
+
+//     if (current.children.length > 0) {
+//       stack.push(...current.children.reverse());
+//     }
+//   }
+// }
