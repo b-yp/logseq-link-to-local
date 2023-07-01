@@ -1,3 +1,11 @@
+## [1.6.2](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.1...v1.6.2) (2023-07-01)
+
+
+### Bug Fixes
+
+* 🐛 Fix the issue of different images becoming the same one during bulk saving ([c08f849](https://github.com/b-yp/logseq-link-to-local/commit/c08f849d0644d6e48c54b41a8563fcfa2199ad1e))
+* Replace the 🤡 in the name ([60ed8e7](https://github.com/b-yp/logseq-link-to-local/commit/60ed8e7a375649443b4e84151abc82dc290f87aa))
+
 ## [1.6.1](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.0...v1.6.1) (2023-06-21)
 
 
