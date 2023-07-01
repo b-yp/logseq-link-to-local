@@ -26,7 +26,7 @@ export const useAppVisible = () => {
 };
 
 // 用于匹配 markdown 格式图片和你 直接链接图片， GPT4 给的匹配函数
-export const findImageLinks = (text: string | undefined): ImageLink[] => {
+export const findImageLinks = (text: string | undefined = '', id: number | undefined = 0): ImageLink[] => {
   if (!text) return [];
   const markdownRegex = /!\[([^\]]*)\]\((https?:\/\/[^)]*)\)/gi;
   const urlRegex = /(https?:\/\/[^\s]*\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))([^\s(){}]*)/gi;
@@ -37,7 +37,12 @@ export const findImageLinks = (text: string | undefined): ImageLink[] => {
 
   while ((match = markdownRegex.exec(text)) !== null) {
     const fullName = match[2].split('/').pop()?.split('?')[0]
-    const name = `${fullName?.split('.')[0] || 'image'}_${index}_${Date.now()}`;
+    /**
+     * 看来这里用索引加时间戳只能保证在同一个块里是唯一的，不同块之间任然不能保证唯一
+     * 有 3 种解决方案：1、加 block 在当前 page 的索引，2、加 block uuid, 3、加 block id
+     * 用 id 吧
+     */
+    const name = `${fullName?.split('.')[0] || 'image'}_${id}_${index}_${Date.now()}`;
     // const type = fullName?.split('.')[1] || 'png';
     const url = match[2].split('?')[0];
     const originalUrl = match[2];
@@ -78,7 +83,7 @@ export const findImageLinks = (text: string | undefined): ImageLink[] => {
     }
 
     const fullName = match[0].split('/').pop()?.split('?')[0];
-    const name = `${fullName?.split('.')[0] || 'image'}_${index}_${Date.now()}`;
+    const name = `${fullName?.split('.')[0] || 'image'}_${id}_${index}_${Date.now()}`;
     const type = fullName?.split('.')[1] || 'png';
     const url = match[1].split('?')[0];
     const originalUrl = match[0];

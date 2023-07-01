@@ -14,7 +14,8 @@ const pluginId = PL.id;
 
 const saveBlockAssets = (currentBlock: BlockEntity) => {
   const storage = logseq.Assets.makeSandboxStorage()
-  const options = findImageLinks(currentBlock.content)
+  // 传递 block ID 用于保证名称的唯一性
+  const options = findImageLinks(currentBlock.content, currentBlock.id)
   const localPaths: string[] = []
 
   const saveImages = (item: string, index: number) => {
