@@ -65,7 +65,7 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
         currentContent?.replace((item.originalUrl) as string, `![${options[index].name}](${localPaths[index]})`)
     })
 
-    logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '🤡')
+    logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '(Error, No content 🤷 !)')
   }).catch(error => {
     logseq.UI.showMsg(JSON.stringify(Object.keys(error).length !== 0 ? (error.message || error) : '请求失败'), 'error')
   })
