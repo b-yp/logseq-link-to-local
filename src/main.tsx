@@ -14,7 +14,8 @@ const pluginId = PL.id;
 
 const saveBlockAssets = (currentBlock: BlockEntity) => {
   const storage = logseq.Assets.makeSandboxStorage()
-  const options = findImageLinks(currentBlock.content)
+  // 传递 block ID 用于保证名称的唯一性
+  const options = findImageLinks(currentBlock.content, currentBlock.id)
   const localPaths: string[] = []
 
   const saveImages = (item: string, index: number) => {
@@ -65,7 +66,7 @@ const saveBlockAssets = (currentBlock: BlockEntity) => {
         currentContent?.replace((item.originalUrl) as string, `![${options[index].name}](${localPaths[index]})`)
     })
 
-    logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '🤡')
+    logseq.Editor.updateBlock(currentBlock?.uuid as string, currentContent || '(Error, No content 🤷 !)')
   }).catch(error => {
     logseq.UI.showMsg(JSON.stringify(Object.keys(error).length !== 0 ? (error.message || error) : '请求失败'), 'error')
   })
