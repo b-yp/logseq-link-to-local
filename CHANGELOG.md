@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.2...v1.6.3) (2023-08-04)
+
+
+### Bug Fixes
+
+* Do not insert error text ([efaf37e](https://github.com/b-yp/logseq-link-to-local/commit/efaf37e0f400221606dd64f9b2e7e3fdf8f8d467))
+
 ## [1.6.2](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.1...v1.6.2) (2023-07-01)
 
 
