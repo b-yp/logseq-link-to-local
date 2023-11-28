@@ -46,7 +46,10 @@ function findMarkdownLinks(markdown: string): FileLink[] {
         const fileNameSplit = link.split('/');
         const fileName = fileNameSplit[fileNameSplit.length - 1];
         const fileTypeSplit = fileName.split('.');
-        const extension = fileTypeSplit.length > 1 ? fileTypeSplit[fileTypeSplit.length - 1] : undefined;
+        let extension = fileTypeSplit.length > 1 ? fileTypeSplit[fileTypeSplit.length - 1] : undefined;
+        if (extension?.includes('?')) {
+            extension = extension?.split('?')[0]
+        }
 
         links.push({
             description: description,
