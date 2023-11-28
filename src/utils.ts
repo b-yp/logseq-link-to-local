@@ -1,139 +1,136 @@
-import { BlockEntity, LSPluginUserEvents } from "@logseq/libs/dist/LSPlugin.user";
+import {BlockEntity, LSPluginUserEvents} from "@logseq/libs/dist/LSPlugin.user";
 import React from "react";
 
-import { ImageLink } from "./types";
+import {FileLink} from "./types";
 
 let _visible = logseq.isMainUIVisible;
 
 function subscribeLogseqEvent<T extends LSPluginUserEvents>(
-  eventName: T,
-  handler: (...args: any) => void
+    eventName: T,
+    handler: (...args: any) => void
 ) {
-  logseq.on(eventName, handler);
-  return () => {
-    logseq.off(eventName, handler);
-  };
+    logseq.on(eventName, handler);
+    return () => {
+        logseq.off(eventName, handler);
+    };
 }
 
 const subscribeToUIVisible = (onChange: () => void) =>
-  subscribeLogseqEvent("ui:visible:changed", ({ visible }) => {
-    _visible = visible;
-    onChange();
-  });
+    subscribeLogseqEvent("ui:visible:changed", ({visible}) => {
+        _visible = visible;
+        onChange();
+    });
 
 export const useAppVisible = () => {
-  return React.useSyncExternalStore(subscribeToUIVisible, () => _visible);
-};
+    return React.useSyncExternalStore(subscribeToUIVisible, () => _visible);
+}
 
-// 用于匹配 markdown 格式图片和你 直接链接图片， GPT4 给的匹配函数
-export const findImageLinks = (text: string | undefined = '', id: number | undefined = 0): ImageLink[] => {
-  if (!text) return [];
-  const markdownRegex = /!\[([^\]]*)\]\((https?:\/\/[^)]*)\)/gi;
-  const urlRegex = /(https?:\/\/[^\s]*\.(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf))([^\s(){}]*)/gi;
-  const matches = [];
-  let match;
-  let index = 1
-  const markdownUrls = [];
-
-  while ((match = markdownRegex.exec(text)) !== null) {
-    const fullName = match[2].split('/').pop()?.split('?')[0]
-    /**
-     * 看来这里用索引加时间戳只能保证在同一个块里是唯一的，不同块之间任然不能保证唯一
-     * 有 3 种解决方案：1、加 block 在当前 page 的索引，2、加 block uuid, 3、加 block id
-     * 用 id 吧
-     */
-    const name = `${fullName?.split('.')[0] || 'image'}_${id}_${index}_${Date.now()}`;
-    // const type = fullName?.split('.')[1] || 'png';
-    const url = match[2].split('?')[0];
-    const originalUrl = match[2];
-    const params = originalUrl.includes('?') ? originalUrl.split('?')[1] : undefined;
-    const description = match[1];
-    index += 1
-
-    const getType = () => {
-      if (!fullName?.split('.')[1]) {
+function getExtension(extension?: string): string {
+    if (!extension) {
         return 'png'
-      }
-      // 这里判断 awebp 主要是针对掘金图片做处理，掘金图片后缀是 awebp，需要替换成 webp
-      if (fullName?.split('.')[1] === 'awebp') {
+    }
+    if (extension === 'awebp') {
         return 'webp'
-      }
-      return fullName?.split('.')[1]
     }
-
-    matches.push({
-      mdImage: match[0],
-      originalUrl,
-      url,
-      params,
-      fullName,
-      name,
-      type: getType(),
-      description
-    });
-
-    // 记录markdown中的URL，用于后续排除这些URL
-    markdownUrls.push(originalUrl);
-  }
-
-  while ((match = urlRegex.exec(text)) !== null) {
-    // 如果此URL已经在Markdown链接中，跳过
-    if (markdownUrls.includes(match[0])) {
-      continue;
-    }
-
-    const fullName = match[0].split('/').pop()?.split('?')[0];
-    const name = `${fullName?.split('.')[0] || 'image'}_${id}_${index}_${Date.now()}`;
-    const type = fullName?.split('.')[1] || 'png';
-    const url = match[1].split('?')[0];
-    const originalUrl = match[0];
-    const params = originalUrl.includes('?') ? originalUrl.split('?')[1] : undefined;
-    index += 1
-
-    matches.push({
-      mdImage: null,
-      originalUrl,
-      url,
-      params,
-      fullName,
-      name,
-      type,
-      description: ''
-    });
-  }
-
-  return matches;
+    return extension
 }
 
-/**
- * 深度优先遍历，递归实现
- * @param arr BlockEntity[]
- * @param fn (block: BlockEntity) => void
- */
-export const deepFirstTraversal = (arr: BlockEntity[], fn: (block: BlockEntity) => void) => {
-  arr.forEach(obj => {
-    console.log(obj.id); // 输出当前节点的 id
-    if (obj) {
-      fn(obj)
+function findMarkdownLinks(markdown: string): FileLink[] {
+    const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const matches = markdown.matchAll(regex);
+    const links: FileLink[] = [];
+
+    for (const match of matches) {
+        const description = match[1];
+        const link = match[2];
+        const fileNameSplit = link.split('/');
+        const fileName = fileNameSplit[fileNameSplit.length - 1];
+        const fileTypeSplit = fileName.split('.');
+        let extension = fileTypeSplit.length > 1 ? fileTypeSplit[fileTypeSplit.length - 1] : undefined;
+        if (extension?.includes('?')) {
+            extension = extension?.split('?')[0]
+        }
+
+        links.push({
+            description: description,
+            url: link,
+            name: fileName,
+            extension: getExtension(extension),
+            fullMatch: match[0],
+            embed: false,
+        });
     }
-    if (obj.children && obj.children.length > 0) {
-      deepFirstTraversal(obj.children as BlockEntity[], fn); // 递归遍历子节点
-    }
-  });
+    return links;
 }
 
-/**
- *  深度优先遍历 block, 迭代实现
- */
-// const deepFirstTraversal = (obj) => {
-//   const stack = [obj];
 
-//   while (stack.length > 0) {
-//     const current = stack.pop();
-//     console.log(current.id); // 输出当前节点的 id
+function findMarkdownImages(input: string): FileLink[] {
+    const regex = /!\[([^\]]+)\]\(([^)]+)\)/g;
+    const mediaExtensions =
+        /(png|jpg|jpeg|gif|bmp|webp|mp3|wav|ogg|mp4|mov|avi|wmv|flv|pdf)/;
+    const fileLinks: FileLink[] = [];
 
-//     if (current.children.length > 0) {
-//       stack.push(...current.children.reverse());
-//     }
-//   }
-// }
+    let match = regex.exec(input);
+
+    console.log(match)
+
+    while (match) {
+        const description = match[1].trim();
+        const url = match[2].trim();
+        const parts = url.split('.');
+        const extMatch = parts[parts.length - 1].match(mediaExtensions);
+
+        if (extMatch) {
+            const extension = extMatch[0];
+            const name = url.split('/').pop() || '';
+
+            fileLinks.push({
+                description,
+                url,
+                name,
+                extension,
+                fullMatch: match[0],
+                embed: true,
+            });
+        }
+
+        match = regex.exec(input);
+    }
+
+    return fileLinks;
+
+}
+
+export function findEntities(text: string): FileLink[] {
+    if (!text) return [];
+
+    const markdownLinks = findMarkdownLinks(text);
+    const mediaLinks = findMarkdownImages(text);
+
+    return mediaLinks.concat(markdownLinks).filter((value) => {
+        return value.url.indexOf('https://') == 0 || value.url.indexOf('http://') == 0
+    });
+}
+
+export function generateFileName(link: FileLink, index: number): string {
+    return decodeURIComponent(`${link.name}_${Date.now()}_${index}.${link.extension}`);
+}
+
+export function renderItem(link: FileLink, localPath: string): string {
+    if (link.embed) {
+        return `![${link.description ?? ''}](${localPath})`
+    } else {
+        return `[${link.description ?? link.name}](${localPath})`
+    }
+}
+
+export function deepFirstTraversal(arr: BlockEntity[], fn: (block: BlockEntity) => void) {
+    arr.forEach(obj => {
+        if (obj) {
+            fn(obj)
+        }
+        if (obj.children && obj.children.length > 0) {
+            deepFirstTraversal(obj.children as BlockEntity[], fn);
+        }
+    });
+}
