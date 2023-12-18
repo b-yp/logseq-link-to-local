@@ -25,6 +25,13 @@ export const useAppVisible = () => {
   return React.useSyncExternalStore(subscribeToUIVisible, () => _visible);
 };
 
+// https://github.com/b-yp/logseq-link-to-local/issues/20
+const replaceSpecialCharacters = (inputString: string): string => {
+  const regex = /[/\\?%*:|"<>.;,= ]/g;
+  const result = inputString.replace(regex, '_');
+  return result;
+}
+
 // 用于匹配 markdown 格式图片和你 直接链接图片， GPT4 给的匹配函数
 export const findImageLinks = (text: string | undefined = '', id: number | undefined = 0): ImageLink[] => {
   if (!text) return [];
@@ -67,7 +74,7 @@ export const findImageLinks = (text: string | undefined = '', id: number | undef
       url,
       params,
       fullName,
-      name,
+      name: replaceSpecialCharacters(name),
       type: getType(),
       description
     });
@@ -96,7 +103,7 @@ export const findImageLinks = (text: string | undefined = '', id: number | undef
       url,
       params,
       fullName,
-      name,
+      name: replaceSpecialCharacters(name),
       type,
       description: ''
     });
