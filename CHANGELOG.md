@@ -1,3 +1,10 @@
+## [1.6.4](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.3...v1.6.4) (2023-12-18)
+
+
+### Bug Fixes
+
+* Exclude special characters from the name ([afe4f73](https://github.com/b-yp/logseq-link-to-local/commit/afe4f73dab4346e26f71b95193973c4474e04a70))
+
 ## [1.6.3](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.2...v1.6.3) (2023-08-04)
 
 
