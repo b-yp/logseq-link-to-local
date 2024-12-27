@@ -65,6 +65,11 @@ export const findImageLinks = (text: string | undefined = '', id: number | undef
       if (fullName?.split('.')[1] === 'awebp') {
         return 'webp'
       }
+      // 判断，如果获取到的格式不属于常规格式，则返回 png
+      const exts = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'mp3', 'wav', 'ogg', 'mp4', 'mov', 'avi', 'wmv', 'flv', 'pdf']
+      if (!exts.includes(fullName?.split('.')[1])) {
+        return 'png'
+      }
       return fullName?.split('.')[1]
     }
 
