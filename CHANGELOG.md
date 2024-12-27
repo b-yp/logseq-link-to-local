@@ -1,3 +1,10 @@
+## [1.6.5](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.4...v1.6.5) (2024-12-27)
+
+
+### Bug Fixes
+
+* fixed the image format ([2d29521](https://github.com/b-yp/logseq-link-to-local/commit/2d295211ade49598d67c3a1d6c29d10cd6372d96))
+
 ## [1.6.4](https://github.com/b-yp/logseq-link-to-local/compare/v1.6.3...v1.6.4) (2023-12-18)
 
 
